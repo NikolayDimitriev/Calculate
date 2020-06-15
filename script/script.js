@@ -4,12 +4,8 @@ let isNumber = function (n) {
     return !isNaN(parseFloat(n)) && isFinite(n);
 };
 let isString = function (n) {
-    let re = /[0-9\^\[\]\.\$\{\}\*\(\)\\\+\|\?\>\<\!\@\#\№\%\&\-\_\=\:\'\"\~]/i;
-    let bool = false;
-    if (n.search(re) != -1) {
-        bool = true;
-    }
-    return bool;
+    const pattern = new RegExp('^[а-я,]', 'gi');
+    return pattern.test(n);
 };
 
 let money,
@@ -39,7 +35,7 @@ let appData = {
             let itemIncome;
             do {
                 itemIncome = prompt("Какой у вас дополнительный заработок?", "Таксую");
-            } while (isString(itemIncome));
+            } while (!isString(itemIncome));
 
             let cashIncome;
             do {
@@ -52,7 +48,7 @@ let appData = {
         let addExpenses;
         do {
             addExpenses = prompt("Перечислите возможные расходы за рассчитываемый период через запятую", 'Бензин, интернет');
-        } while (isString(addExpenses));
+        } while (!isString(addExpenses));
         appData.addExpenses = addExpenses.toLowerCase().split(', ');
         appData.deposit = confirm("Есть ли у вас депозит в банке?");
         appData.getInfoDeposit();
@@ -61,7 +57,7 @@ let appData = {
             let itemExpenses;
             do {
                 itemExpenses = prompt("Введите обязательную статью расходов?", "Бензин");
-            } while (isString(itemExpenses));
+            } while (!isString(itemExpenses));
 
             let cashExpenses;
             do {
