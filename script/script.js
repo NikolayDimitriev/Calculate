@@ -33,6 +33,5 @@ collectionBookFive[1].after(collectionBookFive[9]);
 collectionBookFive[4].after(collectionBookFive[2]);
 
 //part 6
-const collectionUlOfBookSix = books[2].querySelectorAll('ul');
 const collectionLiofBookSix = books[2].querySelectorAll('ul>li');
 collectionLiofBookSix[8].insertAdjacentHTML('afterend', '<li>Глава 8: За пределами ES6</li>');
