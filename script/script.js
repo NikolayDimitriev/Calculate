@@ -166,7 +166,7 @@ let appData = {
 
 buttonStart.disabled = true;
 salaryAmount.addEventListener('input', function () {
-    if (salaryAmount.length === null || salaryAmount.length == 0 || salaryAmount.value === '') {
+    if (salaryAmount.value === '') {
         buttonStart.disabled = true;
 
     } else {
