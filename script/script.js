@@ -166,12 +166,15 @@ let appData = {
 
 buttonStart.disabled = true;
 salaryAmount.addEventListener('input', function () {
-    if (salaryAmount.value !== '') {
-        buttonStart.disabled = false;
-        console.log('Кнопка включена');
+    if (salaryAmount.length === null || salaryAmount.length == 0 || salaryAmount.value === '') {
+        buttonStart.disabled = true;
+        console.log(salaryAmount.length, salaryAmount.value);
 
+    } else {
+        buttonStart.disabled = false;
     }
 });
+
 periodSelect.addEventListener('input', function () {
     periodAmount.textContent = periodSelect.value;
 });
