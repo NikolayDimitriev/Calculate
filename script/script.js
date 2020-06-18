@@ -28,12 +28,18 @@ let salaryAmount = document.querySelector('.salary-amount'),
     targetMonthValue = document.querySelector('.target_month-value');
 
 
-let isNumber = function (n) {
-    return !isNaN(parseFloat(n)) && isFinite(n);
+let onlyNumber = function (n) {
+    n.addEventListener('keydown', (event) => {
+        // Запрещаем все, кроме цифр на основной клавиатуре, а так же Num-клавиатуре
+        if ((event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105)) {
+            event.preventDefault();
+        }
+    });
 };
-let isString = function (n) {
-    const pattern = new RegExp('^[а-я,]', 'gi');
-    return pattern.test(n);
+let onlyWord = function (n) {
+    n.addEventListener('input', () => {
+        n.value = n.value.replace(/[^а-я\s\W]/, '');
+    });
 };
 
 let appData = {
@@ -79,14 +85,26 @@ let appData = {
     },
     addExpensesBlock: function () {
         let cloneExpensesItem = expensesItems[0].cloneNode(true);
+        cloneExpensesItem.querySelector('.expenses-title').value = '';
+        cloneExpensesItem.querySelector('.expenses-amount').value = '';
+        //ограничения
+        onlyWord(cloneExpensesItem.querySelector('.expenses-title'));
+        onlyNumber(cloneExpensesItem.querySelector('.expenses-amount'));
+
         expensesItems[0].parentNode.insertBefore(cloneExpensesItem, buttonExpensesAdd);
         expensesItems = document.querySelectorAll('.expenses-items');
         if (expensesItems.length === 3) {
             buttonExpensesAdd.style.display = 'none';
         }
+
     },
     addIncomeBlock: function () {
         let cloneIncomeItem = incomeItems[0].cloneNode(true);
+        cloneIncomeItem.querySelector('.income-title').value = '';
+        cloneIncomeItem.querySelector('.income-amount').value = '';
+        onlyWord(cloneIncomeItem.querySelector('.income-title'));
+        onlyNumber(cloneIncomeItem.querySelector('.income-amount'));
+
         incomeItems[0].parentNode.insertBefore(cloneIncomeItem, buttonIncomeAdd);
         incomeItems = document.querySelectorAll('.income-items');
         if (incomeItems.length === 3) {
@@ -175,6 +193,19 @@ salaryAmount.addEventListener('input', function () {
 periodSelect.addEventListener('input', function () {
     periodAmount.textContent = periodSelect.value;
 });
+onlyNumber(salaryAmount);
+onlyNumber(targetAmount);
+onlyNumber(document.querySelector('.expenses-amount'));
+onlyNumber(document.querySelector('.income-amount'));
+
+onlyWord(incomeTitle);
+onlyWord(expensesTitle);
+additionalIncomeItem.forEach(function (item) {
+    onlyWord(item);
+});
+
+
+
 buttonStart.addEventListener('click', appData.start);
 buttonExpensesAdd.addEventListener('click', appData.addExpensesBlock);
 buttonIncomeAdd.addEventListener('click', appData.addIncomeBlock);
