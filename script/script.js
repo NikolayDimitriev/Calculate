@@ -165,13 +165,8 @@ let appData = {
 };
 
 buttonStart.disabled = true;
-salaryAmount.addEventListener('input', function () {
-    if (salaryAmount.value === '') {
-        buttonStart.disabled = true;
-
-    } else {
-        buttonStart.disabled = false;
-    }
+salaryAmount.addEventListener('input', () => {
+    buttonStart.disabled = salaryAmount.value === '';
 });
 
 periodSelect.addEventListener('input', function () {
