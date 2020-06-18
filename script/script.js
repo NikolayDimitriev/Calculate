@@ -168,7 +168,6 @@ buttonStart.disabled = true;
 salaryAmount.addEventListener('input', function () {
     if (salaryAmount.length === null || salaryAmount.length == 0 || salaryAmount.value === '') {
         buttonStart.disabled = true;
-        console.log(salaryAmount.length, salaryAmount.value);
 
     } else {
         buttonStart.disabled = false;
