@@ -211,6 +211,8 @@ let appData = {
         this.deposit = false;
         this.percentDeposit = 0;
         this.moneyDeposit = 0;
+        buttonStart.style.display = 'block';
+        buttonCancel.style.display = 'none';
     }
 };
 
