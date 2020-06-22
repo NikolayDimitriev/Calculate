@@ -182,6 +182,13 @@ let appData = {
         document.querySelectorAll('input[type="text"]').forEach(item => {
             item.value = '';
         });
+        periodSelect.value = 1;
+        periodAmount.textContent = periodSelect.value;
+        document.querySelectorAll('.data input[type="text"]').forEach(function (item) {
+            item.removeAttribute('readonly');
+        });
+        
+
     }
 };
 
