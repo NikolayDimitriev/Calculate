@@ -187,10 +187,22 @@ let appData = {
         document.querySelectorAll('.data input[type="text"]').forEach(function (item) {
             item.removeAttribute('readonly');
         });
-        
-
+        incomeItems.forEach(item => {
+            incomeItems = document.querySelectorAll('.income-items');
+            buttonIncomeAdd.style.display = 'block';
+            if (incomeItems.length > 1)
+                item.remove();
+        });
+        expensesItems.forEach(item => {
+            expensesItems = document.querySelectorAll('.expenses-items');
+            buttonExpensesAdd.style.display = 'block'
+            if (expensesItems.length > 1)
+                item.remove();
+        });
     }
 };
+
+
 
 buttonStart.disabled = true;
 salaryAmount.addEventListener('input', function () {
