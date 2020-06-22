@@ -199,9 +199,20 @@ let appData = {
             if (expensesItems.length > 1)
                 item.remove();
         });
+        this.budget = 0;
+        this.budgetDay = 0;
+        this.budgetMonth = 0;
+        this.income = {};
+        this.incomeMonth = 0;
+        this.addIncome = [];
+        this.expenses = {};
+        this.addExpenses = [];
+        this.expensesMonth = 0;
+        this.deposit = false;
+        this.percentDeposit = 0;
+        this.moneyDeposit = 0;
     }
 };
-
 
 
 buttonStart.disabled = true;
