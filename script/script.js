@@ -2,9 +2,7 @@
 
 const salaryAmount = document.querySelector('.salary-amount'),
     incomeTitle = document.querySelector('.income-items>.income-title'),
-    incomeItems = document.querySelectorAll('.income-items'),
     expensesTitle = document.querySelector('.expenses-items>.expenses-title'),
-    expensesItems = document.querySelectorAll('.expenses-items'),
     additionalExpensesItem = document.querySelector('.additional_expenses-item'),
     depositAmount = document.querySelector('.deposit-amount'),
     depositPercent = document.querySelector('.deposit-percent'),
@@ -25,19 +23,8 @@ const salaryAmount = document.querySelector('.salary-amount'),
     incomePeriodValue = document.querySelector('.income_period-value'),
     targetMonthValue = document.querySelector('.target_month-value');
 
-const onlyNumber = function (n) {
-    n.addEventListener('keydown', (event) => {
-        // Запрещаем все, кроме цифр на основной клавиатуре, а так же Num-клавиатуре
-        if ((event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105) && event.keyCode != 8) {
-            event.preventDefault();
-        }
-    });
-};
-const onlyWord = function (n) {
-    n.addEventListener('input', () => {
-        n.value = n.value.replace(/[^а-я\s\W\b]/, '');
-    });
-};
+let expensesItems = document.querySelectorAll('.expenses-items'),
+    incomeItems = document.querySelectorAll('.income-items');
 
 class AppData {
     constructor() {
@@ -86,12 +73,10 @@ class AppData {
         const cloneExpensesItem = expensesItems[0].cloneNode(true);
         cloneExpensesItem.querySelector('.expenses-title').value = '';
         cloneExpensesItem.querySelector('.expenses-amount').value = '';
-        //ограничения
-        onlyWord(cloneExpensesItem.querySelector('.expenses-title'));
-        onlyNumber(cloneExpensesItem.querySelector('.expenses-amount'));
 
         expensesItems[0].parentNode.insertBefore(cloneExpensesItem, buttonExpensesAdd);
         expensesItems = document.querySelectorAll('.expenses-items');
+
         if (expensesItems.length === 3) {
             buttonExpensesAdd.style.display = 'none';
         }
@@ -100,9 +85,6 @@ class AppData {
         const cloneIncomeItem = incomeItems[0].cloneNode(true);
         cloneIncomeItem.querySelector('.income-title').value = '';
         cloneIncomeItem.querySelector('.income-amount').value = '';
-
-        onlyWord(cloneIncomeItem.querySelector('.income-title'));
-        onlyNumber(cloneIncomeItem.querySelector('.income-amount'));
 
         incomeItems[0].parentNode.insertBefore(cloneIncomeItem, buttonIncomeAdd);
         incomeItems = document.querySelectorAll('.income-items');
@@ -224,19 +206,13 @@ class AppData {
         });
 
         const data = document.querySelector('.data');
-        const items = data.querySelectorAll('input[type="text"]');
-
-        const check = (elem) => {
-            if (elem.placeholder === 'Наименование' || elem.placeholder === 'название') {
-                elem.value = elem.value.replace(/[^а-я\s\W\b]/, '');
-            } else if (elem.placeholder === 'Сумма') {
-                elem.value = elem.value.replace(/[^0-9\b]/, '');
+        data.addEventListener('input', (e) => {
+            if (e.target.placeholder === 'Сумма') {
+                e.target.value = e.target.value.replace(/[^0-9\b]/, '');
+            } else if (e.target.placeholder === 'Наименование' || e.target.placeholder === 'название') {
+                e.target.value = e.target.value.replace(/[^а-я\s\W\b]/, '');
             }
-        };
-        items.forEach((item) => {
-            item.addEventListener('input', (e) => {
-                check(e.target);
-            });
+
         });
 
         buttonStart.addEventListener('click', this.start.bind(this)); //начало программы по кнопке рассчитать
