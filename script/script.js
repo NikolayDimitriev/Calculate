@@ -76,7 +76,7 @@ AppData.prototype.showResult = function () {
     targetMonthValue.value = this.getTargetMonth();
     incomePeriodValue.value = this.calcPeriod();
     periodSelect.addEventListener('input', function () {
-        incomePeriodValue.value = _this.calcPeriod;
+        incomePeriodValue.value = _this.calcPeriod();
     });
 };
 AppData.prototype.addExpensesBlock = function () {
