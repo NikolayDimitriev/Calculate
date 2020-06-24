@@ -29,18 +29,11 @@ let salaryAmount = document.querySelector('.salary-amount'),
 
 //функция разрешающая ввод только цифр
 let onlyNumber = function (n) {
-    n.addEventListener('keydown', (event) => {
-        // Запрещаем все, кроме цифр на основной клавиатуре, а так же Num-клавиатуре
-        if ((event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105) && event.keyCode != 8) {
-            event.preventDefault();
-        }
-    });
+    n.value = n.value.replace(/[^0-9\b]/, '');
 };
 //функция разрешающая ввод только русских букв
 let onlyWord = function (n) {
-    n.addEventListener('input', () => {
-        n.value = n.value.replace(/[^а-я\s\W\b]/, '');
-    });
+    n.value = n.value.replace(/[^а-я\s\W\b]/, '');
 };
 
 const AppData = function () {
@@ -221,34 +214,40 @@ AppData.prototype.reset = function () {
 };
 AppData.prototype.eventsListeners = function () {
     buttonStart.disabled = true;
-    salaryAmount.addEventListener('input', function () {
+    salaryAmount.addEventListener('input', function () { //выключение кнопки
         buttonStart.disabled = salaryAmount.value === '';
     });
-    periodSelect.addEventListener('input', function () {
+    periodSelect.addEventListener('input', function () { //динамическое изменение подписи у ползунка
         periodAmount.textContent = periodSelect.value;
     });
 
-    onlyNumber(salaryAmount);
-    onlyNumber(targetAmount);
-    onlyNumber(document.querySelector('.expenses-amount'));
-    onlyNumber(document.querySelector('.income-amount'));
-    onlyWord(incomeTitle);
-    onlyWord(expensesTitle);
-    additionalIncomeItem.forEach(function (item) {
-        onlyWord(item);
+    let data = document.querySelector('.data');
+    let items = data.querySelectorAll('input[type="text"]');
+
+    const checkInput = (elem) => {
+        if (elem.placeholder === 'Наименование' || elem.placeholder === 'название') {
+            onlyWord(elem);
+        } else if (elem.placeholder === 'Сумма') {
+            onlyNumber(elem);
+        }
+    };
+    items.forEach(item => {
+        item.addEventListener('input', (e) => {
+            checkInput(e.target);
+        });
     });
 
 
-    buttonStart.addEventListener('click', this.start.bind(this));
-    buttonStart.addEventListener('click', () => {
+    buttonStart.addEventListener('click', this.start.bind(this)); //начало программы по кнопке рассчитать
+    buttonStart.addEventListener('click', () => { //выключение input`ов
         buttonStart.style.display = 'none';
         buttonCancel.style.display = 'block';
         document.querySelectorAll('.data input[type="text"]').forEach(function (item) {
             item.setAttribute('readonly', true);
         });
     });
-    buttonCancel.addEventListener('click', this.reset.bind(this));
-    buttonExpensesAdd.addEventListener('click', this.addExpensesBlock);
+    buttonCancel.addEventListener('click', this.reset.bind(this)); //кнопка сброса
+    buttonExpensesAdd.addEventListener('click', this.addExpensesBlock); //кнопка "плюс"
     buttonIncomeAdd.addEventListener('click', this.addIncomeBlock);
 };
 
