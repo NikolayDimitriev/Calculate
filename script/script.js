@@ -25,6 +25,45 @@ let expensesItems = document.querySelectorAll('.expenses-items'),
 
 const readLocalStorage = () => JSON.parse(localStorage.getItem('appData')) || [];
 
+//функции для работы с cookie
+function getCookie(name) {
+	const matches = document.cookie.match(new RegExp(
+		"(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+	));
+	return matches ? decodeURIComponent(matches[1]) : undefined;
+}
+
+function setCookie(name, value, options = {}) {
+	options = {
+		path: '/',
+		'max-age': 3600,
+		// при необходимости добавьте другие значения по умолчанию
+		...options
+	};
+
+	if (options.expires instanceof Date) {
+		options.expires = options.expires.toUTCString();
+	}
+
+	let updatedCookie = encodeURIComponent(name) + "=" + encodeURIComponent(value);
+
+	for (const optionKey in options) {
+		updatedCookie += "; " + optionKey;
+		const optionValue = options[optionKey];
+		if (optionValue !== true) {
+			updatedCookie += "=" + optionValue;
+		}
+	}
+	document.cookie = updatedCookie;
+}
+
+
+function deleteCookie(name) {
+	setCookie(name, "", {
+		'max-age': -1
+	});
+}
+
 const output = () => {
 	const localData = readLocalStorage();
 	localData.forEach(item => {
@@ -44,7 +83,6 @@ const output = () => {
 		}
 	});
 };
-
 const insertToLocalStorage = data => {
 	const localData = readLocalStorage();
 	localData.push(data);
@@ -59,25 +97,6 @@ const deleteLocalStorage = () => {
 	output();
 };
 
-const getCookie = name => {
-	const matches = document.cookie.match(new RegExp(
-		"(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
-	));
-	return matches ? decodeURIComponent(matches[1]) : undefined;
-};
-const setCookie = (key, value, year, month, day) => {
-	let cookieStr = encodeURI(key) + '=' + encodeURI(value);
-	if (year) {
-		const expires = new Date(year, month - 1, day);
-		cookieStr += '; expires=' + expires.toGMTString();
-	}
-	document.cookie = cookieStr;
-};
-const deleteCookie = name => {
-	setCookie(name, "", {
-		'max-age': -1
-	});
-};
 
 class AppData {
 	constructor() {
@@ -125,9 +144,11 @@ class AppData {
 			incomePeriodValue: incomePeriodValue.value,
 			isLoad: true
 		};
+		//добавили в localStorage
 		insertToLocalStorage(data);
+		//добавили в cookie
 		for (const key in data) {
-			setCookie(key, data[key], 2020, 6, 30);
+			setCookie(key, data[key]);
 		}
 	}
 	addExpIncBlock() {
@@ -311,8 +332,6 @@ class AppData {
 		buttonExpensesAdd.addEventListener('click', this.addExpIncBlock); //кнопка "плюс"
 		buttonIncomeAdd.addEventListener('click', this.addExpIncBlock);
 		depositCheck.addEventListener('change', this.depositHandler.bind(this));
-
-		console.log(localStorage);
 	}
 }
 const appData = new AppData();
@@ -320,4 +339,44 @@ const appData = new AppData();
 appData.eventsListeners();
 output();
 
-//comment
+// function clearData() {
+// 	const local = readLocalStorage();
+// 	if (local.length > 0) {
+// 		if (getCookie('budgetMonthValue') !== local[0].budgetMonthValue || getCookie('budgetDayValue') !== local[0].budgetDayValue || getCookie('expensesMonthValue') !== local[0].expensesMonthValue || getCookie('additionalExpensesValue') !== local[0].additionalExpensesValue || getCookie('additionalIncomeValue') !== local[0].additionalIncomeValue || getCookie('targetMonthValue') !== local[0].targetMonthValue || getCookie('incomePeriodValue') !== local[0].incomePeriodValue || getCookie('isLoad') !== local[0].isLoad.toString()) {
+
+// 			console.log('cookies change');
+// 			deleteCookie('budgetMonthValue');
+// 			deleteCookie('budgetDayValue');
+// 			deleteCookie('expensesMonthValue');
+// 			deleteCookie('additionalExpensesValue');
+// 			deleteCookie('additionalIncomeValue');
+// 			deleteCookie('targetMonthValue');
+// 			deleteCookie('incomePeriodValue');
+// 			deleteCookie('isLoad');
+// 			deleteLocalStorage();
+// 			window.location.reload();
+// 		}
+// 	}
+// }
+const cook = decodeURIComponent(document.cookie).split('; ');
+const local = readLocalStorage()[0] || [];
+console.log(local);
+console.log(cook);
+
+let bool = false; //все сходится
+if (cook.length > 0) {
+	cook.forEach(item => {
+		if (item.split('=')[1] !== local[item.split('=')[0]].toString() || Object.keys(local).length !== cook.length) {
+			bool = true; //нашлись различия
+			return;
+		}
+	});
+}
+
+if (bool) {
+	cook.forEach(item => {
+		deleteCookie(item.split('=')[0].toString());
+	});
+	deleteLocalStorage();
+	window.location.reload();
+}
