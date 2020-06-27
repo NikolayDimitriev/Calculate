@@ -25,20 +25,59 @@ let expensesItems = document.querySelectorAll('.expenses-items'),
 
 const readLocalStorage = () => JSON.parse(localStorage.getItem('appData')) || [];
 
-function insertToLocalStorage(data) {
+const output = () => {
+	const localData = readLocalStorage();
+	localData.forEach(item => {
+		budgetMonthValue.value = item.budgetMonthValue;
+		budgetDayValue.value = item.budgetDayValue;
+		expensesMonthValue.value = item.expensesMonthValue;
+		additionalExpensesValue.value = item.additionalExpensesValue;
+		additionalIncomeValue.value = item.additionalIncomeValue;
+		targetMonthValue.value = item.targetMonthValue;
+		incomePeriodValue.value = item.incomePeriodValue;
+		buttonStart.style.display = 'none';
+		buttonCancel.style.display = 'block';
+		if (budgetMonthValue.value === item.budgetMonthValue) {
+			document.querySelectorAll('.data input[type="text"]').forEach(item => {
+				item.setAttribute('readonly', true);
+			});
+		}
+	});
+};
+
+const insertToLocalStorage = data => {
 	const localData = readLocalStorage();
 	localData.push(data);
 	localStorage.setItem('appData', JSON.stringify(localData));
 	output();
-}
+};
 
-function deleteLocalStorage() {
+const deleteLocalStorage = () => {
 	const localData = readLocalStorage();
 	localData.splice(0); //удаляем все элементы
 	localStorage.setItem('appData', JSON.stringify(localData));
 	output();
-}
+};
 
+const getCookie = name => {
+	const matches = document.cookie.match(new RegExp(
+		"(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+	));
+	return matches ? decodeURIComponent(matches[1]) : undefined;
+};
+const setCookie = (key, value, year, month, day) => {
+	let cookieStr = encodeURI(key) + '=' + encodeURI(value);
+	if (year) {
+		const expires = new Date(year, month - 1, day);
+		cookieStr += '; expires=' + expires.toGMTString();
+	}
+	document.cookie = cookieStr;
+};
+const deleteCookie = name => {
+	setCookie(name, "", {
+		'max-age': -1
+	});
+};
 
 class AppData {
 	constructor() {
@@ -84,10 +123,12 @@ class AppData {
 			additionalIncomeValue: additionalIncomeValue.value,
 			targetMonthValue: targetMonthValue.value,
 			incomePeriodValue: incomePeriodValue.value,
-			buttonStartDisplay: 'none',
-			buttonCancelDisplay: 'block'
+			isLoad: true
 		};
 		insertToLocalStorage(data);
+		for (const key in data) {
+			setCookie(key, data[key], 2020, 6, 30);
+		}
 	}
 	addExpIncBlock() {
 		const startStr = this.className.split(' ')[1].split('_')[0];
@@ -236,6 +277,9 @@ class AppData {
 		periodSelect.addEventListener('input', () => { //динамическое изменение подписи у ползунка
 			periodAmount.textContent = periodSelect.value;
 		});
+		periodSelect.addEventListener('input', () => {
+			incomePeriodValue.value = budgetMonthValue.value * periodSelect.value;
+		});
 
 		const data = document.querySelector('.data');
 		data.addEventListener('input', e => {
@@ -255,7 +299,6 @@ class AppData {
 			}
 
 		});
-
 		buttonStart.addEventListener('click', this.start.bind(this)); //начало программы по кнопке рассчитать
 		buttonStart.addEventListener('click', () => { //выключение input`ов
 			buttonStart.style.display = 'none';
@@ -269,28 +312,12 @@ class AppData {
 		buttonIncomeAdd.addEventListener('click', this.addExpIncBlock);
 		depositCheck.addEventListener('change', this.depositHandler.bind(this));
 
+		console.log(localStorage);
 	}
 }
 const appData = new AppData();
 
-function output() {
-	const localData = readLocalStorage();
-	localData.forEach(item => {
-		budgetMonthValue.value = item.budgetMonthValue;
-		budgetDayValue.value = item.budgetDayValue;
-		expensesMonthValue.value = item.expensesMonthValue;
-		additionalExpensesValue.value = item.additionalExpensesValue;
-		additionalIncomeValue.value = item.additionalIncomeValue;
-		targetMonthValue.value = item.targetMonthValue;
-		incomePeriodValue.value = item.incomePeriodValue;
-		buttonStart.style.display = item.buttonStartDisplay;
-		buttonCancel.style.display = item.buttonCancelDisplay;
-	});
-	periodSelect.addEventListener('input', () => {
-		incomePeriodValue.value = budgetMonthValue.value * periodSelect.value;
-	});
-}
-
-
 appData.eventsListeners();
 output();
+
+//comment
