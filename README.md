@@ -1,2 +1,3 @@
-# study_JS
+Калькулятор
+
 Курс по JavaScript от Glo Academy
