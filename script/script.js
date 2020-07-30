@@ -25,14 +25,6 @@ let expensesItems = document.querySelectorAll('.expenses-items'),
 
 const readLocalStorage = () => JSON.parse(localStorage.getItem('appData')) || [];
 
-//функции для работы с cookie
-function getCookie(name) {
-	const matches = document.cookie.match(new RegExp(
-		"(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
-	));
-	return matches ? decodeURIComponent(matches[1]) : undefined;
-}
-
 function setCookie(name, value, options = {}) {
 	options = {
 		path: '/',
@@ -339,29 +331,8 @@ const appData = new AppData();
 appData.eventsListeners();
 output();
 
-// function clearData() {
-// 	const local = readLocalStorage();
-// 	if (local.length > 0) {
-// 		if (getCookie('budgetMonthValue') !== local[0].budgetMonthValue || getCookie('budgetDayValue') !== local[0].budgetDayValue || getCookie('expensesMonthValue') !== local[0].expensesMonthValue || getCookie('additionalExpensesValue') !== local[0].additionalExpensesValue || getCookie('additionalIncomeValue') !== local[0].additionalIncomeValue || getCookie('targetMonthValue') !== local[0].targetMonthValue || getCookie('incomePeriodValue') !== local[0].incomePeriodValue || getCookie('isLoad') !== local[0].isLoad.toString()) {
-
-// 			console.log('cookies change');
-// 			deleteCookie('budgetMonthValue');
-// 			deleteCookie('budgetDayValue');
-// 			deleteCookie('expensesMonthValue');
-// 			deleteCookie('additionalExpensesValue');
-// 			deleteCookie('additionalIncomeValue');
-// 			deleteCookie('targetMonthValue');
-// 			deleteCookie('incomePeriodValue');
-// 			deleteCookie('isLoad');
-// 			deleteLocalStorage();
-// 			window.location.reload();
-// 		}
-// 	}
-// }
 const cook = decodeURIComponent(document.cookie).split('; ');
 const local = readLocalStorage()[0] || [];
-console.log(local);
-console.log(cook);
 
 let bool = false; //все сходится
 if (cook.length > 0) {
